@@ -122,4 +122,47 @@ fun AddEditLoanScreen(
             )
 
             OutlinedTextField(
-                value
+                value = startDate,
+                onValueChange = { startDate = it },
+                label = { Text("تاریخ شروع (مثال: ۱۴۰۳/۰۱/۰۱)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = note,
+                onValueChange = { note = it },
+                label = { Text("توضیحات (اختیاری)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    val amountLong = amount.toLongOrNull() ?: 0
+                    val installmentsInt = installments.toIntOrNull() ?: 1
+                    val interestRateDouble = interestRate.toDoubleOrNull() ?: 0.0
+
+                    viewModel.saveLoan(
+                        id = loanId,
+                        bankName = bankName,
+                        loanType = loanType,
+                        amount = amountLong,
+                        installments = installmentsInt,
+                        interestRate = interestRateDouble,
+                        startDate = startDate,
+                        note = note
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isSaving && bankName.isNotBlank() && loanType.isNotBlank() && amount.isNotBlank() && installments.isNotBlank()
+            ) {
+                if (isSaving) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                } else {
+                    Text(if (loanId == 0L) "ذخیره وام" else "به‌روزرسانی وام")
+                }
+            }
+        }
+    }
+}
